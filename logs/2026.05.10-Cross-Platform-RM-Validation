@@ -1,0 +1,204 @@
+1. Reeba Dual-Boot Recovery and GRUB Configuration
+
+Issues Encountered
+
+  During Windows Update:
+
+Automatic reboot redirected system into Kali Linux
+GRUB defaulted to Kali
+Temporary read-only filesystem state observed after unclean shutdown
+Resolution
+
+Booted into Kali.
+
+Validated GRUB entries.
+
+Regenerated boot entries:
+
+sudo update-grub
+
+Confirmed:
+
+Windows Boot Manager rediscovered
+
+Modified GRUB default entry to:
+
+Microsoft Windows Boot Manager
+
+Result
+
+Subsequent Windows update cycles rebooted directly back into Windows without manual intervention.
+
+2. OpenSSH Server Deployment on Reeba
+Issues Encountered
+
+Initial SSH attempts from Nora and mobile clients resulted in:
+
+Connection timeout
+sshd service missing
+
+Root Cause:
+
+Only OpenSSH Client was installed.
+
+Resolution
+
+Installed:
+
+OpenSSH Server
+
+Started service:
+
+Start-Service sshd
+Set-Service -Name sshd -StartupType Automatic
+
+Validated service state:
+
+Get-Service sshd
+
+Validated port listening:
+
+netstat -ano | findstr :22
+
+Result:
+
+0.0.0.0:22 LISTENING
+
+3. Firewall Profile Troubleshooting
+Issues Encountered
+
+SSH handshake stalled despite:
+
+Port 22 listening
+Firewall rule present
+Root Cause
+
+Windows network profile = Public
+
+SSH firewall rule = Private only
+
+Resolution
+
+Modified firewall rule:
+
+Set-NetFirewallRule -Name OpenSSH-Server-In-TCP -Profile Any
+
+Restarted SSH service.
+
+Result
+
+Remote SSH immediately succeeded.
+
+4. Authentication Troubleshooting
+Issues Encountered
+
+Authentication failures in Termius
+
+Root Cause
+
+Incorrect username formatting.
+
+Windows account discovered via:
+
+whoami
+
+Returned:
+
+reeba\camer_20dan1b
+
+Resolution
+
+Updated SSH username format:
+
+reeba\camer_20dan1b
+
+Result
+
+Authentication succeeded.
+
+5. Cross-Platform Remote Management Validation
+
+Successfully established:
+
+Mobile
+
+iPhone → Termius → Nora
+
+iPhone → Termius → Reeba
+
+Workstation
+
+Cass → Termius → Nora
+
+Cass → Termius → Reeba
+
+Local Validation
+
+Verified:
+
+ssh localhost
+
+on Reeba.
+
+Infrastructure Discovery
+
+Recognized distinct node roles emerging organically:
+
+Cass
+
+Creation / production workstation
+
+Reeba
+
+Administration / security / testing
+
+Nora
+
+Infrastructure / compute / virtualization
+
+Mobile Devices
+
+Portable management endpoints
+
+Current Status
+Nora
+
+✅ SSH operational
+✅ Virtualization operational
+✅ WIN-DC01 active
+
+Reeba
+
+✅ Dual boot stable
+✅ Windows updates validated
+✅ SSH operational
+
+Cass
+
+✅ Remote management operational
+✅ Mobile admin integration validated
+
+Next Session Goals
+Phase 1
+
+Create VM snapshot:
+
+sudo virsh snapshot-create-as WIN-DC01 clean-install
+Phase 2
+
+Configure Windows Server:
+
+Static IP
+DNS
+NTP
+Phase 3
+
+Install:
+
+Active Directory Domain Services
+
+Promote:
+
+WIN-DC01
+
+to first domain controller.
