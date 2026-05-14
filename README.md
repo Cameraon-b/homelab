@@ -122,7 +122,7 @@ Future goal:
 
 Detailed setup logs, troubleshooting notes, lessons learned, and infrastructure changes are documented in:
 
-- `/journal`
+- `/logs`
 
 Examples include:
 
@@ -160,7 +160,7 @@ while preparing for roles in:
 
 ## About Me
 
-I'm Cameron Beck, a Computer Science graduate based in Missouri with a background in operations leadership, process optimization, and technical problem solving.
+I'm Cameron Beck, I have a bachelors in computer science and am based in Missouri with a background in operations leadership, process optimization, and technical problem solving.
 
 GitHub:
 https://github.com/Cameraon-b
