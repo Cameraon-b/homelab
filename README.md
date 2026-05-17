@@ -1,155 +1,381 @@
 # Cameron's Homelab
 
-A hands-on infrastructure and systems administration lab built to develop real-world IT, networking, virtualization, and server administration skills.
+A hands-on infrastructure, systems administration, and automation lab built to develop real-world experience in:
 
-This project is part of my journey from operations to IT and development. The goal is to build, break, troubleshoot, document, and continuously improve systems in a real home environment.
-
----
-
-## Current Infrastructure
-
-### Physical Systems
-
-- **Nora** — Linux server
-  - Ubuntu Server
-  - Headless administration via SSH
-  - KVM / libvirt virtualization host
-
-- **Windows / Kali Workstation**
-  - Dual boot system
-  - Remote administration and testing
-
-- **Raspberry Pi Systems** *(planned expansion)*
-  - Pi-hole
-  - DNS / network services
-  - automation experiments
-
----
-
-## Virtual Infrastructure
-
-### Current Virtual Machines
-
-#### Windows Server
-Purpose:
-
-- Active Directory
-- Domain services
-- Group Policy
-- User and device management
-
-#### Windows Client *(in progress)*
-
-Purpose:
-
-- Domain joining
-- User authentication
-- Endpoint administration
-
-#### Linux Test Systems *(planned)*
-
-Purpose:
-
-- scripting
+- systems administration
+- virtualization
 - networking
+- identity and access management
 - automation
-- container experimentation
+- troubleshooting
+- infrastructure operations
+
+This project is part of my transition from operations leadership into IT, infrastructure, and eventually DevOps.
+
+The goal is simple:
+
+**Build. Break. Troubleshoot. Document. Improve. Repeat.**
 
 ---
 
-## Technologies
+# Current Infrastructure
 
-### Operating Systems
+## Physical Systems
+
+### Nora — Infrastructure Host
+
+Purpose:
+
+Primary infrastructure server.
+
+Configuration:
+
+- Ubuntu Server
+- Headless administration via SSH
+- KVM / libvirt virtualization host
+- Bridged networking
+- Cockpit web management
+- SMART disk monitoring
+
+---
+
+### Reeba — Engineering Workstation
+
+Purpose:
+
+Primary engineering and experimentation workstation.
+
+Current Roles:
+
+- Windows administration
+- virtualization
+- AI experimentation
+- ORICA management
+- remote infrastructure management
+
+---
+
+### Cass — Remote Administration & Creative Workstation
+
+Purpose:
+
+Secondary administration workstation and production desktop.
+
+Current Roles:
+
+- Windows 10
+- remote administration
+- SSH / Termius access
+- Active Directory testing
+- documentation
+- music production
+- development
+
+---
+
+### Windows / Kali Workstation
+
+Purpose:
+
+Security testing and future offensive/defensive experimentation.
+
+Current Roles:
+
+- dual boot
+- penetration testing
+- networking experimentation
+
+---
+
+### Raspberry Pi Systems *(planned expansion)*
+
+Future Roles:
+
+- Pi-hole
+- DNS services
+- network monitoring
+- automation
+- IoT experimentation
+
+---
+
+# Virtual Infrastructure
+
+## AETHER — Core Infrastructure Domain
+
+Production-like Windows domain environment.
+
+### Domain Information
+
+Domain:
+
+`aether.lab`
+
+NetBIOS:
+
+`AETHER`
+
+---
+
+### Virtual Machines
+
+#### WIN-DC01 — Domain Controller
+
+Roles:
+
+- Active Directory Domain Services
+- DNS
+- Group Policy
+- Authentication
+- Kerberos
+
+Configured:
+
+- users
+- security groups
+- organizational units
+- delegated administration
+- password policies
+- account lockout policies
+
+---
+
+#### WIN-CLIENT01 — Domain Client
+
+Roles:
+
+- domain authentication
+- endpoint policy validation
+- remote administration workstation
+
+Configured:
+
+- domain joined
+- Group Policy validation
+- mapped network drives
+- RSAT administration tools
+
+---
+
+### Current Active Directory Structure
+
+Organizational Units:
+
+- Admins
+- Users
+- Resources
+- Policies
+
+Administrative Accounts:
+
+- `labadmin`
+- `helpdesk01` *(Tier 1)*
+- `helpdesk02` *(Tier 2)*
+
+Security Groups:
+
+- `GG_Aether_Helpdesk_T1`
+- `GG_Aether_Helpdesk_T2`
+- `GG_AetherShare_RW`
+- `GG_AetherShare_RO`
+- `GG_AetherShare_Deny`
+
+Delegation Implemented:
+
+Tier 1:
+
+- password resets
+- forced password changes
+
+Tier 2:
+
+- create users
+- edit users
+- delete users
+- password management
+
+---
+
+## ORICA — AI Sandbox
+
+Separate experimental environment.
+
+Purpose:
+
+AI-assisted automation, scripting, and agent experimentation.
+
+Host:
+
+Reeba
+
+VM:
+
+`ORICA-AI1`
+
+OS:
+
+Ubuntu
+
+Configured:
+
+- OpenClaw
+- OpenAI backend integration
+- file automation
+- scripting experiments
+- Ruby experimentation
+
+---
+
+# Technologies
+
+## Operating Systems
 
 - Ubuntu Server
 - Windows Server
+- Windows 10 Enterprise
 - Windows 11
 - Kali Linux
 
-### Virtualization
+---
+
+## Virtualization
 
 - KVM
 - libvirt
-- Virtual Machine Manager
+- qcow2 snapshots
+- bridged networking
 
-### Networking / Administration
+---
+
+## Identity & Access Management
+
+- Active Directory
+- Group Policy
+- Kerberos
+- role-based access control
+- delegated administration
+
+---
+
+## Linux Administration
 
 - SSH
-- TCP/IP fundamentals
-- Remote administration
-- Shared resources
-- basic DNS concepts
+- systemd
+- journalctl
+- smartmontools
+- Cockpit
 
-### Version Control / Documentation
+---
+
+## Networking
+
+- TCP/IP
+- DNS
+- SMB shares
+- bridged virtualization networking
+- remote administration
+
+---
+
+## Automation / Development
 
 - Git
 - GitHub
 - Markdown
-- deployment logs
+- OpenClaw
+- Ruby
+- Bash
 
 ---
 
-## Current Projects
+# Current Projects
 
-### Active Directory Lab
+## Active Directory Infrastructure
 
-Building a Windows domain environment including:
+Completed:
 
-- domain controller
-- users/groups
-- policies
-- Windows client integration
+- domain controller deployment
+- domain client integration
+- organizational unit design
+- delegated administration
+- Group Policy enforcement
+- password and lockout policies
+- mapped network shares
 
-### Personal Website Hosting *(planned)*
+In Progress:
 
-Future goal:
+- workstation administration
+- computer object delegation
+- PowerShell remoting
+- Remote Desktop policies
 
-- self-host personal website
+---
+
+## Host Operations
+
+Completed:
+
+- Cockpit deployment
+- storage monitoring
+- SMART diagnostics
+- live infrastructure logging
+
+In Progress:
+
+- preventative SATA maintenance
+- hardware reliability validation
+
+---
+
+## Security Lab *(planned)*
+
+Future goals:
+
+- join Kali systems to domain
+- SMB enumeration
+- LDAP testing
+- Kerberos analysis
+- blue-team / red-team workflows
+
+---
+
+## Personal Hosting *(planned)*
+
+Future goals:
+
+- self-hosted website
 - portfolio
 - photography
 - music
 - development projects
 
-### Network Services *(planned)*
+---
 
-- Pi-hole
-- DNS filtering
-- network monitoring
+# Journal
+
+Detailed engineering logs, troubleshooting notes, architecture decisions, and infrastructure changes are documented in:
+
+`/logs`
+
+Topics include:
+
+- server deployment
+- virtualization
+- networking
+- Active Directory
+- delegation
+- Group Policy
+- monitoring
+- AI experimentation
+- infrastructure troubleshooting
 
 ---
 
-## Journal
-
-Detailed setup logs, troubleshooting notes, lessons learned, and infrastructure changes are documented in:
-
-- `/logs`
-
-Examples include:
-
-- Ubuntu Server installation
-- SSH configuration
-- virtualization setup
-- VM troubleshooting
-- Windows Server deployment
-- networking issues and fixes
-
----
-
-## Why This Exists
+# Why This Exists
 
 I learn best by building real systems.
 
-This homelab allows me to develop hands-on experience in:
-
-- systems administration
-- infrastructure
-- troubleshooting
-- documentation
-- automation
-- security
-- networking
-
-while preparing for roles in:
+This homelab gives me hands-on experience operating, troubleshooting, and documenting production-like infrastructure while preparing for roles in:
 
 - IT Support
 - Systems Administration
@@ -158,9 +384,12 @@ while preparing for roles in:
 
 ---
 
-## About Me
+# About Me
 
-I'm Cameron Beck, I have a bachelors in computer science and am based in Missouri with a background in operations leadership, process optimization, and technical problem solving.
+I'm Cameron Beck, based in Missouri, with a background in operations leadership, process optimization, and technical troubleshooting.
+
+I recently completed my Bachelor of Science in Computer Science and am actively building real-world infrastructure experience through this lab.
 
 GitHub:
-https://github.com/Cameraon-b
+
+:contentReference[oaicite:4]{index=4}
