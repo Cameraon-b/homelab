@@ -1,0 +1,379 @@
+# Entry 09 — Delegated Administration, Group Policy Expansion, and Host Monitoring
+
+## Date
+2026-05-16
+
+---
+
+## Objective
+
+Continue evolving AETHER from a basic Active Directory lab into a more production-like environment by:
+
+- Implementing tiered administrative roles
+- Testing delegated permissions from an admin workstation
+- Expanding Group Policy scope across the domain
+- Troubleshooting user policy inconsistencies
+- Deploying host-level monitoring on Nora
+- Investigating hardware warnings on the hypervisor
+
+---
+
+## Environment
+
+### Infrastructure Domain
+
+**AETHER**
+
+Host:
+- Nora
+
+Host OS:
+- Ubuntu Server
+
+Virtualization:
+- KVM
+- libvirt
+
+Networking:
+- bridged interface (br0)
+
+Domain:
+- aether.lab
+
+Domain Controller:
+- WIN-DC01
+
+Client Workstation:
+- WIN-CLIENT01
+
+---
+
+### AI Sandbox
+
+**ORICA**
+
+Host:
+- Reeba
+
+VM:
+- ORICA-AI1
+
+Purpose:
+- AI experimentation
+- automation
+- scripting
+- OpenClaw testing
+
+---
+
+## Work Completed
+
+### 1. Implemented Role-Based Administration
+
+Created new administrative groups and users to simulate real organizational roles.
+
+Administrative Accounts:
+
+- labadmin
+- helpdesk01 (Tier 1)
+- helpdesk02 (Tier 2)
+
+Administrative Group Model:
+
+- GG_Aether_Helpdesk_T1
+- GG_Aether_Helpdesk_T2
+
+Organizational Design:
+
+- Admin accounts remain in `OU=Admins`
+- Managed users remain in delegated user containers
+
+Key realization:
+
+Delegation is applied to the OU containing managed objects—not the OU containing the administrators.
+
+This clarified the separation between:
+
+- administrative identities
+- managed identities
+- delegated resource boundaries
+
+---
+
+### 2. Delegated Active Directory Permissions
+
+Using Active Directory Users and Computers:
+
+Enabled:
+- Advanced Features
+
+Configured delegated permissions on user containers.
+
+Tier 1 Helpdesk:
+
+Granted:
+
+- password reset
+- forced password changes
+
+Denied:
+
+- user creation
+- user deletion
+
+Validated:
+
+- helpdesk01 could reset user credentials
+- helpdesk01 could not create new users
+
+Tier 2 Helpdesk:
+
+Granted:
+
+- create users
+- edit users
+- delete users
+- password management
+
+Validated:
+
+- helpdesk02 successfully created and managed user accounts
+
+This successfully simulated role-based access control.
+
+---
+
+### 3. Installed Remote Administration Tools
+
+Installed RSAT on WIN-CLIENT01.
+
+Validated:
+
+- `dsa.msc`
+- remote Active Directory administration from client workstation
+
+Confirmed:
+
+Administrative consoles communicate with WIN-DC01 through domain services rather than running local directory services.
+
+Learned that RSAT acts as a remote management console for:
+
+- LDAP
+- Kerberos
+- Group Policy
+- Active Directory objects
+
+---
+
+### 4. Expanded Wallpaper Group Policy
+
+Previous wallpaper policy stopped applying after users were moved into default `CN=Users`.
+
+Discovered:
+
+Default `Users` container is not an OU.
+
+Learned:
+
+Group Policy links only to:
+
+- Sites
+- Domains
+- OUs
+
+Actions:
+
+Moved policy scope to domain root:
+
+`aether.lab`
+
+Result:
+
+Wallpaper policy now applies domain-wide.
+
+---
+
+### 5. Troubleshot Black Wallpaper on Helpdesk Accounts
+
+Symptom:
+
+- helpdesk users received black desktop background
+- standard users received correct wallpaper
+
+Diagnosis:
+
+Group Policy applied successfully, but wallpaper image could not be accessed.
+
+Tested:
+
+UNC path access:
+
+`\\WIN-DC01\AetherShare`
+
+Root Cause:
+
+Share and NTFS permissions did not allow helpdesk accounts to read wallpaper asset.
+
+Remediation:
+
+Updated:
+
+- SMB share permissions
+- NTFS permissions
+
+Result:
+
+- wallpaper successfully applied to helpdesk accounts
+
+Key lesson:
+
+Policy application may succeed even when policy resources are inaccessible.
+
+---
+
+### 6. Explored Domain Password Complexity
+
+While creating test users, observed password rejection when passwords contained parts of user names.
+
+Example:
+
+User:
+- Ram Dass
+
+Rejected Password:
+- BeHereNowRam!
+
+Investigated:
+
+Default Domain Policy → Password Complexity
+
+Learned:
+
+Microsoft complexity rules reject passwords containing:
+
+- account names
+- portions of full names
+
+Confirmed domain-level password enforcement.
+
+---
+
+### 7. Installed Cockpit on Nora
+
+Installed:
+
+- cockpit
+- cockpit-machines
+
+Purpose:
+
+Provide lightweight web-based host management.
+
+Capabilities now available:
+
+- host resource monitoring
+- service monitoring
+- log inspection
+- storage management
+- VM visibility
+
+Key realization:
+
+Nora is transitioning from "headless server" to operational infrastructure platform.
+
+---
+
+### 8. Investigated Storage Warnings on Nora
+
+Observed repeated kernel warnings in Cockpit.
+
+Symptoms:
+
+- yellow storage alerts
+- ATA communication warnings
+
+Investigated with:
+
+`smartctl`
+
+Findings:
+
+Drive health appears normal.
+
+SMART indicators:
+
+- Reallocated sectors = 0
+- Uncorrectable errors = 0
+- SMART error log = clean
+- Temperature = normal
+- Power-on hours = low
+
+Conclusion:
+
+Most likely causes:
+
+1. SATA data cable
+2. SATA power connector
+3. Motherboard SATA port
+
+Drive failure currently unlikely.
+
+Planned maintenance:
+
+- reseat SATA connections
+- possibly replace cable
+- continue monitoring via Cockpit and journalctl
+
+---
+
+## Concepts Reinforced
+
+### Active Directory
+
+- organizational units
+- delegated administration
+- RBAC
+- domain-level policy inheritance
+
+### Authentication
+
+- Kerberos ticket-based authentication
+- remote administration through domain services
+
+### Group Policy
+
+- OU vs container behavior
+- domain root inheritance
+- policy asset accessibility
+
+### Linux Infrastructure
+
+- Cockpit monitoring
+- SMART diagnostics
+- kernel log interpretation
+- preventative maintenance
+
+---
+
+## Key Realization
+
+A major mindset shift occurred during this session:
+
+Moved from simply "using computers" toward understanding how enterprise systems are actually designed, delegated, monitored, and maintained.
+
+AETHER increasingly feels less like a lab and more like a living infrastructure environment.
+
+---
+
+## Next Steps
+
+Potential Entry 10 objectives:
+
+- Create Workstations OU
+- Create desktop support role
+- Delegate computer object management
+- Join additional clients
+- Configure Remote Desktop policies
+- Explore PowerShell remoting
+- Redirect default AD containers with `redirusr` and `redircmp`
+- Perform Nora SATA maintenance
