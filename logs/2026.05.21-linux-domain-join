@@ -1,0 +1,302 @@
+# Entry 12 — Linux Domain Join and Cross-Platform Authentication (AETHER + AlmaLinux)
+
+## Date
+May 21, 2026
+
+## Objective
+Deploy a Linux workstation VM (AlmaLinux) on Cass, join it to the AETHER Active Directory domain, authenticate using Windows domain credentials, and verify cross-platform file share access using Kerberos and SMB.
+
+---
+
+## Environment
+
+### Host
+Cass (Windows 10 Home)
+
+### Virtualization Platform
+VirtualBox
+
+### Guest VM
+AlmaLinux Workstation
+
+### Domain
+AETHER.LAB
+
+### Domain Controller
+WIN-DC01 (192.168.1.15)
+
+---
+
+## Work Completed
+
+### Initial VM Deployment
+- Downloaded Rocky Linux boot ISO (initial attempt)
+- Encountered repeated kernel panics during boot
+- Switched to Rocky DVD ISO (boot issues persisted)
+- Tested AlmaLinux with same failures
+
+### Virtualization Troubleshooting
+- Investigated host virtualization layer on Cass
+- Ran:
+
+```cmd
+systeminfo
+bcdedit
+```
+
+- Identified:
+
+```text
+hypervisorlaunchtype Auto
+Hyper-V Requirements: A hypervisor has been detected
+```
+
+- Determined Microsoft hypervisor layer was interfering with VirtualBox Linux guests
+
+### Host-Level Fix
+Disabled Microsoft hypervisor boot layer:
+
+```cmd
+bcdedit /set hypervisorlaunchtype off
+```
+
+- Rebooted Cass
+- Re-ran AlmaLinux installer
+- Installer launched successfully
+
+### AlmaLinux Installation
+- Installed AlmaLinux Workstation in VirtualBox
+- Configured:
+  - Bridged networking
+  - Workstation software profile
+  - Remote management tools
+  - System tools
+
+---
+
+## Network Troubleshooting
+
+### Initial Problem
+VM received NAT IP:
+
+```text
+10.0.2.15
+```
+
+This prevented domain communication.
+
+### Resolution
+Changed VirtualBox network adapter to:
+
+```text
+Bridged Adapter → Realtek PCIe GbE Family Controller
+```
+
+VM then received LAN IP:
+
+```text
+192.168.1.167
+```
+
+---
+
+## DNS Troubleshooting
+
+### Initial Problem
+DNS pointed to:
+
+```text
+192.168.1.137
+```
+
+This was an incorrect assumption based on a previous VNC connection target.
+
+Domain discovery failed:
+
+```bash
+realm discover aether.lab
+→ No such realm found
+```
+
+### Root Cause
+Verified actual AD DNS records on WIN-DC01:
+
+```powershell
+nslookup aether.lab
+```
+
+Correct domain controller IP:
+
+```text
+192.168.1.15
+```
+
+### Resolution
+Updated AlmaLinux DNS via NetworkManager:
+
+```bash
+sudo nmcli connection modify enp0s3 ipv4.dns "192.168.1.15"
+sudo nmcli connection modify enp0s3 ipv4.ignore-auto-dns yes
+```
+
+Restarted connection and verified:
+
+```text
+nameserver 192.168.1.15
+```
+
+---
+
+## Domain Discovery
+
+Installed required packages:
+
+```bash
+sudo dnf install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools krb5-workstation -y
+```
+
+Ran:
+
+```bash
+realm discover aether.lab
+```
+
+Successful output confirmed:
+
+- realm-name: AETHER.LAB
+- server-software: active-directory
+- client-software: sssd
+- kerberos support detected
+
+---
+
+## Domain Join
+
+### First Attempt
+Attempted join using standard domain user:
+
+```bash
+sudo realm join aether.lab -U cameron
+```
+
+Failed with:
+
+```text
+Insufficient permissions to join the domain
+```
+
+### Resolution
+Retried using domain admin account:
+
+```bash
+sudo realm join aether.lab -U labadmin
+```
+
+Join completed successfully.
+
+---
+
+## Authentication Verification
+
+Logged into AlmaLinux GUI using:
+
+```text
+cameron@AETHER.LAB
+```
+
+Verified:
+
+- Domain login succeeded
+- Home directory created automatically
+- SSSD identity translation working
+- AD group memberships visible in Linux
+
+Observed Linux recognizing Windows AD groups:
+
+```text
+domain users@aether.lab
+gg_fileshare_rw@aether.lab
+```
+
+---
+
+## Cross-Platform File Share Access
+
+### Challenge
+Domain user lacked sudo rights in Linux:
+
+```text
+cameron@aether.lab is not in the sudoers file
+```
+
+### Resolution
+Switched to local Linux admin account:
+
+```bash
+su - cameron
+```
+
+Created mount point:
+
+```bash
+sudo mkdir /mnt/aethershare
+```
+
+Mounted Windows SMB share using Kerberos:
+
+```bash
+sudo mount -t cifs //win-dc01.aether.lab/AetherShare /mnt/aethershare -o sec=krb5,cruid=$(id -u cameron@aether.lab)
+```
+
+### Result
+Windows share mounted successfully in AlmaLinux.
+
+Verified:
+- Share visible in Linux network browser
+- Cross-platform SMB access working
+- Kerberos-authenticated Windows file access from Linux successful
+
+---
+
+## Lessons Learned
+
+- Microsoft hypervisor layers can interfere with VirtualBox Linux guests
+- Bridged networking is required for domain client behavior
+- AD DNS must point to the domain controller, not the router
+- Domain users and local Linux users remain separate identities
+- Linux can consume Windows AD identity data using Kerberos + SSSD
+- Windows AD security groups can translate into Linux session/group membership
+- Cross-platform SMB access can use Kerberos instead of local credential prompts
+
+---
+
+## Key Outcome
+
+Successfully deployed a Linux workstation joined to AETHER Active Directory and authenticated to Windows identity services.
+
+Validated:
+
+```text
+Windows AD identity authority
+→ Linux domain login
+→ Kerberos ticketing
+→ SSSD identity translation
+→ SMB file share access
+```
+
+---
+
+## Notes
+
+This was one of the most technically satisfying homelab projects completed so far.
+
+Major concepts reinforced:
+
+- virtualization troubleshooting
+- DNS troubleshooting
+- Kerberos
+- LDAP / Active Directory
+- SSSD
+- SMB/CIFS
+- cross-platform authentication
+- Windows/Linux interoperability
