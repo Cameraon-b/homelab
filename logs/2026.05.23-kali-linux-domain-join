@@ -1,0 +1,334 @@
+# Entry 13 — Kali Linux Domain Join via Samba/Winbind (AETHER Security Workstation)
+
+## Date
+May 24, 2026
+
+## Objective
+
+Deploy Kali Linux as a domain-aware security workstation within the AETHER lab environment and validate cross-platform Active Directory authentication using Samba, Winbind, and Kerberos.
+
+Goals:
+
+- Integrate Kali Linux into AETHER Active Directory
+- Validate Kerberos authentication
+- Troubleshoot Linux AD join path differences from AlmaLinux
+- Verify domain user and group resolution
+- Establish Kali as a security workstation inside the domain
+
+---
+
+## Environment
+
+### Host
+Reeba (Windows 11)
+
+### Guest / Platform
+Kali Linux
+
+### Domain
+AETHER.LAB
+
+### Domain Controller
+WIN-DC01 (192.168.1.15)
+
+---
+
+## Work Completed
+
+---
+
+# Initial AD Join Attempt
+
+Attempted to follow similar domain join process used on AlmaLinux.
+
+Installed:
+
+```bash
+realmd
+krb5-user
+samba
+winbind
+libnss-winbind
+libpam-winbind
+samba-common-bin
+```
+
+---
+
+## Problem Encountered
+
+Attempting standard domain join:
+
+```bash
+realm join aether.lab
+```
+
+failed repeatedly with:
+
+```text
+Necessary packages are not installed
+```
+
+This occurred despite packages being confirmed present.
+
+---
+
+# DNS Troubleshooting
+
+## Initial Problem
+
+Kali defaulted to router DNS:
+
+```text
+192.168.1.1
+```
+
+instead of domain controller DNS.
+
+This caused:
+
+- Kerberos failures
+- KDC lookup failures
+- domain service discovery issues
+
+Observed:
+
+```text
+kinit: Cannot contact any KDC for realm 'AETHER.LAB'
+```
+
+---
+
+## Resolution
+
+Updated NetworkManager DNS configuration:
+
+```bash
+sudo nmcli connection modify "SpectrumSetup-6F" ipv4.dns "192.168.1.15"
+sudo nmcli connection modify "SpectrumSetup-6F" ipv4.ignore-auto-dns yes
+```
+
+Restarted connection and verified:
+
+```text
+nameserver 192.168.1.15
+```
+
+---
+
+# Kerberos Validation
+
+Successfully authenticated to Active Directory:
+
+```bash
+kinit labadmin@AETHER.LAB
+```
+
+Verified with:
+
+```bash
+klist
+```
+
+Confirmed valid Kerberos ticket:
+
+```text
+Default principal: labadmin@AETHER.LAB
+krbtgt/AETHER.LAB@AETHER.LAB
+```
+
+This validated:
+
+- KDC communication
+- Kerberos authentication
+- DNS-based service discovery
+
+---
+
+# realmd Failure
+
+Even after successful Kerberos authentication:
+
+```bash
+realm join
+```
+
+continued to fail incorrectly with package detection errors.
+
+Determined:
+
+- packages installed correctly
+- services running correctly
+- realmd detection unreliable in this Kali configuration
+
+---
+
+# Manual Samba / Winbind AD Join
+
+Pivoted to manual Samba configuration.
+
+Updated:
+
+```text
+/etc/samba/smb.conf
+```
+
+Configured:
+
+- ADS security mode
+- AETHER workgroup
+- realm settings
+- winbind identity mapping
+- Linux shell/home directory templates
+
+Performed manual join:
+
+```bash
+sudo net ads join -U labadmin
+```
+
+Result:
+
+```text
+Joined 'REEBA' to dns domain 'aether.lab'
+```
+
+---
+
+# Winbind Validation
+
+Restarted winbind:
+
+```bash
+sudo systemctl restart winbind
+```
+
+Verified domain user enumeration:
+
+```bash
+wbinfo -u
+```
+
+Successfully returned:
+
+- administrator
+- cameron
+- labadmin
+- helpdesk accounts
+- bulk-created test users
+
+Confirmed Kali was communicating directly with Active Directory.
+
+---
+
+# Domain Identity Validation
+
+Validated with:
+
+```bash
+id cameron
+```
+
+Observed:
+
+```text
+domain users
+gg_fileshare_rw
+```
+
+Linux successfully mapped Windows AD security groups into Linux session identity.
+
+Confirmed:
+
+- domain user lookup working
+- group-based authorization working
+- cross-platform centralized identity functioning
+
+---
+
+## Lessons Learned
+
+### DNS remains foundational
+
+Incorrect DNS caused:
+
+- Kerberos failures
+- KDC lookup failures
+- AD service discovery failure
+
+Domain clients must point directly to the domain controller.
+
+---
+
+### Linux AD integration varies by distro
+
+### AlmaLinux
+
+Used:
+
+- realmd
+- SSSD
+- streamlined enterprise join path
+
+### Kali Linux
+
+Required:
+
+- Samba
+- Winbind
+- manual ADS join
+- direct configuration
+
+Demonstrated multiple Linux approaches to centralized AD identity.
+
+---
+
+### Identity exists above the OS
+
+Validated same user identity across:
+
+- Windows
+- AlmaLinux
+- Kali Linux
+
+Permissions followed the user through:
+
+- centralized authentication
+- group membership
+- resource authorization
+
+---
+
+## Key Outcome
+
+Successfully converted Kali Linux into a domain-aware security workstation inside AETHER.
+
+Validated:
+
+```text
+Kerberos authentication
+→ manual Samba domain join
+→ Winbind user enumeration
+→ AD group translation into Linux
+→ centralized identity across OS boundaries
+```
+
+---
+
+## Notes
+
+This was one of the most satisfying homelab projects completed so far.
+
+AETHER now includes:
+
+- Windows clients
+- Enterprise Linux client
+- Security Linux workstation
+- centralized Active Directory identity
+- cross-platform user/group authorization
+
+Lab now feels less like a collection of machines and more like:
+
+```text
+an actual organization
+```
