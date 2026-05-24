@@ -1,0 +1,373 @@
+# Entry 12 — Multi-OS Domain Expansion: AlmaLinux + Kali Join AETHER
+
+## Date
+May 24, 2026
+
+---
+
+## Objective
+
+Expand the AETHER Active Directory lab by integrating additional Linux systems into the domain and validating centralized identity management across multiple operating systems.
+
+Goals:
+
+- Join AlmaLinux workstation to AETHER domain
+- Validate Linux AD authentication
+- Test SMB file share access from Linux
+- Join Kali Linux to AETHER domain
+- Troubleshoot DNS / Kerberos / realmd issues
+- Validate cross-platform AD user and group resolution
+- Continue evolving lab from isolated VMs into a multi-system organizational environment
+
+---
+
+## Environment
+
+### Infrastructure Host
+- **Nora** (Ubuntu Server / KVM Hypervisor)
+
+### Domain Services
+- **WIN-DC01**
+  - Windows Server
+  - Active Directory Domain Services
+  - DNS
+  - Kerberos
+  - SMB File Share (`AetherShare`)
+
+### Windows Clients
+- **WIN-CLIENT01**
+
+### Linux Clients
+- **AlmaLinux**
+- **Kali Linux (REEBA)**
+
+### Domain
+- **aether.lab**
+
+---
+
+## Work Completed
+
+---
+
+# 1. AlmaLinux Domain Join
+
+Installed required domain integration packages:
+
+- realmd
+- sssd
+- adcli
+- oddjob
+- samba-common-tools
+- Kerberos packages
+
+Configured:
+
+- Hostname
+- DNS pointing to WIN-DC01
+- realm discovery
+- domain enrollment
+
+Successfully joined:
+
+```text
+Alma.aether.lab
+```
+
+Verified:
+
+- Domain login worked
+- Linux user identity resolved
+- Kerberos authentication functional
+
+---
+
+# 2. SMB Share Access from AlmaLinux
+
+Tested cross-platform file share access from Linux workstation.
+
+Successfully accessed:
+
+```text
+AetherShare
+```
+
+using AD-authenticated credentials.
+
+Confirmed:
+
+- Windows file share visible in Linux GUI
+- Group-based permissions functional
+- Linux user recognized as domain identity
+
+---
+
+# 3. Kali Linux AD Integration (Security Workstation Buildout)
+
+Objective:
+
+Convert Kali Linux into a domain-aware security workstation for AETHER.
+
+---
+
+## Initial Issues Encountered
+
+### Package confusion
+
+Attempted standard AD join path:
+
+```bash
+realm join
+```
+
+Kali package behavior differed from Alma:
+
+- `sssd` packages unavailable
+- `realmd` continued requesting missing packages
+- Debian/Kali package path differed from RHEL-family behavior
+
+---
+
+### DNS issue discovered
+
+Kali defaulted to router DNS:
+
+```text
+192.168.1.1
+```
+
+instead of:
+
+```text
+192.168.1.15
+(WIN-DC01)
+```
+
+This prevented:
+
+- Kerberos KDC discovery
+- AD SRV record resolution
+- domain authentication
+
+Fixed by reconfiguring NetworkManager DNS settings to point directly to domain controller.
+
+---
+
+## Kerberos Validation
+
+Successfully obtained Kerberos ticket:
+
+```text
+Default principal: labadmin@AETHER.LAB
+krbtgt/AETHER.LAB@AETHER.LAB
+```
+
+Confirmed:
+
+- KDC reachable
+- Kerberos authentication functional
+- Domain trust path operational
+
+---
+
+## realmd Failure
+
+Despite packages being installed, `realm join` repeatedly failed with:
+
+```text
+Necessary packages are not installed
+```
+
+Packages confirmed present via:
+
+- dpkg
+- service checks
+- NSS configuration validation
+
+Determined `realmd` package detection on Kali was unreliable in this configuration.
+
+---
+
+# 4. Manual Samba / Winbind AD Join
+
+Pivoted to manual domain integration.
+
+Configured:
+
+```ini
+/etc/samba/smb.conf
+```
+
+Set:
+
+- workgroup
+- realm
+- ADS security mode
+- winbind identity settings
+- UID/GID mapping
+- Linux shell / home directory templates
+
+Performed manual AD join:
+
+```bash
+sudo net ads join -U labadmin
+```
+
+Result:
+
+```text
+Joined 'REEBA' to dns domain 'aether.lab'
+```
+
+---
+
+# 5. Winbind Validation
+
+Restarted winbind service and validated domain enumeration.
+
+Successful:
+
+```bash
+wbinfo -u
+```
+
+Returned domain users including:
+
+- administrator
+- labadmin
+- cameron
+- helpdesk accounts
+- bulk-created test users
+
+Confirmed Kali was querying Active Directory directly.
+
+---
+
+# 6. Domain Group Mapping Validation
+
+Validated Linux identity with:
+
+```bash
+id cameron
+```
+
+Confirmed local + domain-integrated group membership:
+
+```text
+domain users
+gg_fileshare_rw
+```
+
+This verified:
+
+- Windows AD groups mapped into Linux security model
+- Group-based permissions functioning cross-platform
+- Linux workstation behaving as domain citizen
+
+---
+
+## Key Lessons Learned
+
+### DNS is foundational
+
+Incorrect DNS caused:
+
+- Kerberos failures
+- realm discovery issues
+- KDC lookup failures
+
+Domain clients must point directly to domain controller DNS.
+
+---
+
+### Linux AD integration can vary by distro
+
+Observed:
+
+### AlmaLinux
+
+Modern:
+
+- realmd
+- sssd
+- streamlined enterprise join path
+
+### Kali Linux
+
+Required:
+
+- Samba
+- Winbind
+- manual configuration
+- direct AD join commands
+
+Demonstrated different Linux approaches to centralized identity.
+
+---
+
+### Identity exists above the OS
+
+Validated centralized identity across:
+
+- Windows
+- AlmaLinux
+- Kali Linux
+
+Same credentials usable across systems with:
+
+- shared permissions
+- group-based authorization
+- centralized authentication
+
+Lab now behaves more like an organizational environment than isolated VMs.
+
+---
+
+## Current Lab Status
+
+### Identity Infrastructure
+- WIN-DC01 (AD / DNS / Kerberos)
+
+### Windows Client
+- WIN-CLIENT01
+
+### Linux Clients
+- AlmaLinux (domain joined)
+- Kali Linux / REEBA (domain joined via Samba/Winbind)
+
+### Shared Resources
+- AetherShare
+
+### Infrastructure Host
+- Nora
+
+---
+
+## Outcome
+
+Successfully transformed AETHER from a basic Windows AD lab into a multi-OS centralized identity environment.
+
+Validated:
+
+- Kerberos authentication
+- DNS-based domain service discovery
+- Linux AD enrollment
+- Samba / Winbind integration
+- SMB file sharing across OS boundaries
+- Domain group mapping into Linux security model
+
+AETHER now functions as a small organizational domain environment with centralized identity and cross-platform resource access.
+
+---
+
+## Notes
+
+This was one of the most satisfying homelab milestones so far.
+
+Lab now feels less like “a collection of VMs” and more like:
+
+```text
+an actual organization
+```
+
+where identity and permissions follow the user across systems regardless of operating system.
