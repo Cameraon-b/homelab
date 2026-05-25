@@ -12,7 +12,7 @@ A hands-on infrastructure, systems administration, containerization, monitoring,
 - troubleshooting
 - infrastructure operations
 
-This project serves as both a **learning environment** and an **engineering portfolio** documenting hands-on infrastructure work while supporting my transition from operations leadership into IT, infrastructure, and eventually DevOps.
+This project serves as both a **learning environment** and an **engineering portfolio** 
 
 The goal is simple:
 
