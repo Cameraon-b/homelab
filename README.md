@@ -1,16 +1,18 @@
 # Cameron's Homelab
 
-A hands-on infrastructure, systems administration, and automation lab built to develop real-world experience in:
+A hands-on infrastructure, systems administration, containerization, monitoring, and automation lab built to develop real-world experience in:
 
 - systems administration
 - virtualization
 - networking
 - identity and access management
+- containerization
+- monitoring / observability
 - automation
 - troubleshooting
 - infrastructure operations
 
-This project is part of my transition from operations leadership into IT, infrastructure, and eventually DevOps.
+This project serves as both a **learning environment** and an **engineering portfolio** documenting hands-on infrastructure work while supporting my transition from operations leadership into IT, infrastructure, and eventually DevOps.
 
 The goal is simple:
 
@@ -26,16 +28,27 @@ The goal is simple:
 
 Purpose:
 
-Primary infrastructure server.
+Primary infrastructure server and AETHER core host.
 
 Configuration:
 
 - Ubuntu Server
-- Headless administration via SSH
+- headless administration via SSH
 - KVM / libvirt virtualization host
-- Bridged networking
+- bridged networking
 - Cockpit web management
+- Docker Engine
+- Docker Compose
+- Uptime Kuma monitoring
 - SMART disk monitoring
+
+Current Roles:
+
+- virtualization host
+- Active Directory lab host
+- container platform
+- monitoring node
+- infrastructure management
 
 ---
 
@@ -47,11 +60,12 @@ Primary engineering and experimentation workstation.
 
 Current Roles:
 
-- Windows administration
-- virtualization
+- Windows 11 administration
 - AI experimentation
-- ORICA management
+- OpenClaw / Mira agent node
 - remote infrastructure management
+- Kali Linux dual boot
+- networking experimentation
 
 ---
 
@@ -68,22 +82,9 @@ Current Roles:
 - SSH / Termius access
 - Active Directory testing
 - documentation
+- AlmaLinux VM host
 - music production
 - development
-
----
-
-### Windows / Kali Workstation
-
-Purpose:
-
-Security testing and future offensive/defensive experimentation.
-
-Current Roles:
-
-- dual boot
-- penetration testing
-- networking experimentation
 
 ---
 
@@ -117,7 +118,7 @@ NetBIOS:
 
 ---
 
-### Virtual Machines
+### Virtual Machines on Nora
 
 #### WIN-DC01 — Domain Controller
 
@@ -154,6 +155,38 @@ Configured:
 - Group Policy validation
 - mapped network drives
 - RSAT administration tools
+
+---
+
+### Additional Domain Systems
+
+#### AlmaLinux *(VM on Cass)*
+
+Roles:
+
+- Linux domain authentication
+- cross-platform AD testing
+- SSH administration
+
+Configured:
+
+- joined to AETHER domain
+- AD login validation
+
+---
+
+#### Kali Linux *(Dual Boot on Reeba)*
+
+Roles:
+
+- Linux domain authentication
+- security testing
+- networking experimentation
+
+Configured:
+
+- joined to AETHER domain
+- winbind / AD authentication
 
 ---
 
@@ -198,11 +231,9 @@ Tier 2:
 
 ## ORICA — AI Sandbox
 
-Separate experimental environment.
+Separate experimental environment for AI-assisted tooling and automation.
 
-Purpose:
-
-AI-assisted automation, scripting, and agent experimentation.
+### ORICA-AI1
 
 Host:
 
@@ -226,15 +257,102 @@ Configured:
 
 ---
 
+## Mira — Local AI Agent Node
+
+Purpose:
+
+Native AI/agent experimentation environment.
+
+Host:
+
+Reeba
+
+OS:
+
+Windows 11
+
+Configured:
+
+- OpenClaw
+- local dashboard
+- gateway services
+- workspace automation
+- file-based task execution
+- AI-assisted experimentation
+
+---
+
+# Container Infrastructure
+
+## Docker Platform (Nora)
+
+Docker is now deployed on Nora as a lightweight application platform alongside virtualization.
+
+Configured:
+
+- Docker Engine
+- Docker Compose
+- persistent Docker volumes
+- custom Docker bridge networks
+- container lifecycle testing
+- self-hosted services
+
+Current Services:
+
+### Nginx Test Service
+
+Purpose:
+
+Basic web service deployment and container lifecycle testing.
+
+Features:
+
+- persistent web content via Docker volume
+- Compose-managed deployment
+- LAN access testing
+
+---
+
+### Uptime Kuma
+
+Purpose:
+
+Infrastructure monitoring and observability.
+
+Features:
+
+- LAN host monitoring
+- HTTP service monitoring
+- DNS health checks
+- SSH / TCP port monitoring
+- SSL/TLS validation handling
+- infrastructure visibility dashboard
+
+Monitored Systems:
+
+- Nora
+- WIN-DC01
+- WIN-CLIENT01
+- Cass
+- Reeba
+- AlmaLinux
+- Kali Linux
+- external connectivity
+- internal services
+
+---
+
 # Technologies
 
 ## Operating Systems
 
 - Ubuntu Server
+- Ubuntu Desktop
 - Windows Server
-- Windows 10 Enterprise
+- Windows 10
 - Windows 11
 - Kali Linux
+- AlmaLinux
 
 ---
 
@@ -244,6 +362,17 @@ Configured:
 - libvirt
 - qcow2 snapshots
 - bridged networking
+
+---
+
+## Containerization
+
+- Docker Engine
+- Docker Compose
+- persistent volumes
+- custom bridge networks
+- image/container lifecycle
+- self-hosted service deployment
 
 ---
 
@@ -267,12 +396,25 @@ Configured:
 
 ---
 
+## Monitoring / Observability
+
+- Uptime Kuma
+- host monitoring
+- service health checks
+- DNS monitoring
+- HTTP monitoring
+- SSL/TLS troubleshooting
+- infrastructure visibility
+
+---
+
 ## Networking
 
 - TCP/IP
 - DNS
 - SMB shares
 - bridged virtualization networking
+- Docker networking
 - remote administration
 
 ---
@@ -285,6 +427,7 @@ Configured:
 - OpenClaw
 - Ruby
 - Bash
+- YAML
 
 ---
 
@@ -311,6 +454,28 @@ In Progress:
 
 ---
 
+## Container Infrastructure
+
+Completed:
+
+- Docker installation on Nora
+- container lifecycle testing
+- persistent Docker volumes
+- custom Docker bridge networks
+- Docker Compose deployments
+- self-hosted nginx
+- Uptime Kuma deployment
+- LAN infrastructure monitoring
+
+In Progress:
+
+- reverse proxy research
+- internal DNS naming
+- containerized application hosting
+- future self-hosted services
+
+---
+
 ## Host Operations
 
 Completed:
@@ -319,6 +484,7 @@ Completed:
 - storage monitoring
 - SMART diagnostics
 - live infrastructure logging
+- VM memory optimization
 
 In Progress:
 
@@ -331,11 +497,11 @@ In Progress:
 
 Future goals:
 
-- join Kali systems to domain
 - SMB enumeration
 - LDAP testing
 - Kerberos analysis
 - blue-team / red-team workflows
+- internal vulnerability testing
 
 ---
 
@@ -344,10 +510,11 @@ Future goals:
 Future goals:
 
 - self-hosted website
-- portfolio
+- portfolio hosting
 - photography
 - music
 - development projects
+- reverse proxy services
 
 ---
 
@@ -361,11 +528,12 @@ Topics include:
 
 - server deployment
 - virtualization
+- Docker
+- monitoring
 - networking
 - Active Directory
 - delegation
 - Group Policy
-- monitoring
 - AI experimentation
 - infrastructure troubleshooting
 
@@ -375,7 +543,7 @@ Topics include:
 
 I learn best by building real systems.
 
-This homelab gives me hands-on experience operating, troubleshooting, and documenting production-like infrastructure while preparing for roles in:
+This homelab gives me hands-on experience operating, troubleshooting, monitoring, and documenting production-like infrastructure while preparing for roles in:
 
 - IT Support
 - Systems Administration
@@ -388,8 +556,4 @@ This homelab gives me hands-on experience operating, troubleshooting, and docume
 
 I'm Cameron Beck, based in Missouri, with a background in operations leadership, process optimization, and technical troubleshooting.
 
-I recently completed my Bachelor of Science in Computer Science and am actively building real-world infrastructure experience through this lab.
-
-GitHub:
-
-:contentReference[oaicite:4]{index=4}
+I recently completed my Bachelor of Science in Computer Science and am actively building real-world infrastructure experience through this lab as I transition into IT and infrastructure-focused roles.
