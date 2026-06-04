@@ -1,18 +1,20 @@
-# Cameron's Homelab
+# Cameron's Homelab (AETHER)
 
-A hands-on infrastructure, systems administration, containerization, monitoring, and automation lab built to develop real-world experience in:
+A hands-on infrastructure, systems administration, containerization, monitoring, documentation, and automation lab built to develop real-world experience in:
 
-- systems administration
-- virtualization
-- networking
-- identity and access management
-- containerization
-- monitoring / observability
-- automation
-- troubleshooting
-- infrastructure operations
+* Systems Administration
+* Virtualization
+* Networking
+* Identity & Access Management
+* Containerization
+* Monitoring / Observability
+* Documentation
+* Disaster Recovery
+* Automation
+* Troubleshooting
+* Infrastructure Operations
 
-This project serves as both a **learning environment** and an **engineering portfolio** 
+This project serves as both a **learning environment** and an **engineering portfolio**.
 
 The goal is simple:
 
@@ -32,23 +34,31 @@ Primary infrastructure server and AETHER core host.
 
 Configuration:
 
-- Ubuntu Server
-- headless administration via SSH
-- KVM / libvirt virtualization host
-- bridged networking
-- Cockpit web management
-- Docker Engine
-- Docker Compose
-- Uptime Kuma monitoring
-- SMART disk monitoring
+* Ubuntu Server
+* Headless administration via SSH
+* KVM / libvirt virtualization host
+* Bridged networking
+* Cockpit web management
+* Docker Engine
+* Docker Compose
+* Uptime Kuma monitoring
+* SMART disk monitoring
 
 Current Roles:
 
-- virtualization host
-- Active Directory lab host
-- container platform
-- monitoring node
-- infrastructure management
+* Virtualization host
+* Active Directory lab host
+* Container platform
+* Monitoring node
+* Documentation platform
+* Reverse proxy host
+* Backup and recovery platform
+
+IP Address:
+
+```text
+192.168.1.137
+```
 
 ---
 
@@ -60,12 +70,19 @@ Primary engineering and experimentation workstation.
 
 Current Roles:
 
-- Windows 11 administration
-- AI experimentation
-- OpenClaw / Mira agent node
-- remote infrastructure management
-- Kali Linux dual boot
-- networking experimentation
+* Windows 11 administration
+* AI experimentation
+* OpenClaw / Mira agent node
+* Remote infrastructure management
+* Kali Linux dual boot
+* Networking experimentation
+* Active Directory Linux integration
+
+IP Address:
+
+```text
+192.168.1.155
+```
 
 ---
 
@@ -77,26 +94,33 @@ Secondary administration workstation and production desktop.
 
 Current Roles:
 
-- Windows 10
-- remote administration
-- SSH / Termius access
-- Active Directory testing
-- documentation
-- AlmaLinux VM host
-- music production
-- development
+* Windows 10
+* Remote administration
+* SSH / Termius access
+* Active Directory testing
+* Documentation
+* AlmaLinux VM host
+* Music production
+* Development
+* Central AETHER management workstation
+
+IP Address:
+
+```text
+192.168.1.134
+```
 
 ---
 
-### Raspberry Pi Systems *(planned expansion)*
+### Raspberry Pi Systems *(Planned Expansion)*
 
 Future Roles:
 
-- Pi-hole
-- DNS services
-- network monitoring
-- automation
-- IoT experimentation
+* Pi-hole
+* DNS services
+* Network monitoring
+* Automation
+* IoT experimentation
 
 ---
 
@@ -110,175 +134,196 @@ Production-like Windows domain environment.
 
 Domain:
 
-`aether.lab`
+```text
+aether.lab
+```
 
 NetBIOS:
 
-`AETHER`
+```text
+AETHER
+```
 
 ---
 
-### Virtual Machines on Nora
+## Virtual Machines on Nora
 
-#### WIN-DC01 — Domain Controller
+### WIN-DC01 — Domain Controller
 
 Roles:
 
-- Active Directory Domain Services
-- DNS
-- Group Policy
-- Authentication
-- Kerberos
+* Active Directory Domain Services
+* DNS
+* Group Policy
+* Authentication
+* Kerberos
 
 Configured:
 
-- users
-- security groups
-- organizational units
-- delegated administration
-- password policies
-- account lockout policies
+* Users
+* Security Groups
+* Organizational Units
+* Delegated Administration
+* Password Policies
+* Account Lockout Policies
+
+IP Address:
+
+```text
+192.168.1.15
+```
 
 ---
 
-#### WIN-CLIENT01 — Domain Client
+### WIN-CLIENT01 — Domain Client
 
 Roles:
 
-- domain authentication
-- endpoint policy validation
-- remote administration workstation
+* Domain Authentication
+* Endpoint Policy Validation
+* Remote Administration Workstation
 
 Configured:
 
-- domain joined
-- Group Policy validation
-- mapped network drives
-- RSAT administration tools
+* Domain Joined
+* Group Policy Validation
+* RSAT Administration Tools
+
+IP Address:
+
+```text
+192.168.1.75
+```
 
 ---
 
-### Additional Domain Systems
+## Additional Domain Systems
 
-#### AlmaLinux *(VM on Cass)*
+### AlmaLinux *(VM on Cass)*
 
 Roles:
 
-- Linux domain authentication
-- cross-platform AD testing
-- SSH administration
+* Linux domain authentication
+* Cross-platform AD testing
+* SSH administration
 
 Configured:
 
-- joined to AETHER domain
-- AD login validation
+* Joined to AETHER domain
+* realmd
+* SSSD
+* AD login validation
 
 ---
 
-#### Kali Linux *(Dual Boot on Reeba)*
+### Kali Linux *(Dual Boot on Reeba)*
 
 Roles:
 
-- Linux domain authentication
-- security testing
-- networking experimentation
+* Linux domain authentication
+* Security testing
+* Networking experimentation
 
 Configured:
 
-- joined to AETHER domain
-- winbind / AD authentication
+* Joined to AETHER domain
+* Winbind
+* AD authentication
+* SMB share access
 
 ---
 
-### Current Active Directory Structure
+# Active Directory
 
-Organizational Units:
+## Organizational Units
 
-- Admins
-- Users
-- Resources
-- Policies
-
-Administrative Accounts:
-
-- `labadmin`
-- `helpdesk01` *(Tier 1)*
-- `helpdesk02` *(Tier 2)*
-
-Security Groups:
-
-- `GG_Aether_Helpdesk_T1`
-- `GG_Aether_Helpdesk_T2`
-- `GG_AetherShare_RW`
-- `GG_AetherShare_RO`
-- `GG_AetherShare_Deny`
-
-Delegation Implemented:
-
-Tier 1:
-
-- password resets
-- forced password changes
-
-Tier 2:
-
-- create users
-- edit users
-- delete users
-- password management
+* Admins
+* Users
+* Resources
+* Policies
 
 ---
 
-## ORICA — AI Sandbox
+## Administrative Accounts
 
-Separate experimental environment for AI-assisted tooling and automation.
-
-### ORICA-AI1
-
-Host:
-
-Reeba
-
-VM:
-
-`ORICA-AI1`
-
-OS:
-
-Ubuntu
-
-Configured:
-
-- OpenClaw
-- OpenAI backend integration
-- file automation
-- scripting experiments
-- Ruby experimentation
+* labadmin
+* helpdesk01 (Tier 1)
+* helpdesk02 (Tier 2)
 
 ---
 
-## Mira — Local AI Agent Node
+## Security Groups
 
-Purpose:
+Administrative Groups:
 
-Native AI/agent experimentation environment.
+* GG_IT_Admins
+* DnsAdmins
 
-Host:
+Helpdesk Groups:
 
-Reeba
+* GG_Helpdesk_Tier1
+* GG_Helpdesk_Tier2
+* GG_Aether_DesktopSupport
 
-OS:
+Resource Access Groups:
 
-Windows 11
+* GG_AetherShare_RW
+* GG_AetherShare_RO
+* GG_AetherShare_Deny
 
-Configured:
+Remote Access Groups:
 
-- OpenClaw
-- local dashboard
-- gateway services
-- workspace automation
-- file-based task execution
-- AI-assisted experimentation
+* GG_Aether_RDP_Workstations
+
+---
+
+## Delegation Implemented
+
+### Tier 1
+
+* Password resets
+* Forced password changes
+
+### Tier 2
+
+* Create users
+* Edit users
+* Delete users
+* Password management
+
+---
+
+## Group Policies
+
+* Aether_Workstation_RDP
+* AETHER Wallpaper Policy
+* Aether User Restrictions
+* Default Domain Policy
+* Default Domain Controllers Policy
+
+---
+
+# DNS Infrastructure
+
+Hosted on:
+
+```text
+WIN-DC01
+```
+
+Current Records:
+
+* wiki.aether.lab
+* kuma.aether.lab
+* test.aether.lab
+* memos.aether.lab
+
+DNS is used for:
+
+* Internal service discovery
+* Reverse proxy routing
+* Infrastructure monitoring
+* Domain services
 
 ---
 
@@ -286,30 +331,39 @@ Configured:
 
 ## Docker Platform (Nora)
 
-Docker is now deployed on Nora as a lightweight application platform alongside virtualization.
+Docker is deployed on Nora as a lightweight application platform alongside virtualization.
 
 Configured:
 
-- Docker Engine
-- Docker Compose
-- persistent Docker volumes
-- custom Docker bridge networks
-- container lifecycle testing
-- self-hosted services
+* Docker Engine
+* Docker Compose
+* Persistent Docker volumes
+* Custom Docker bridge networks
+* Container lifecycle testing
+* Self-hosted services
 
-Current Services:
+---
 
-### Nginx Test Service
+### BookStack
 
 Purpose:
 
-Basic web service deployment and container lifecycle testing.
+Centralized documentation and institutional memory platform.
 
 Features:
 
-- persistent web content via Docker volume
-- Compose-managed deployment
-- LAN access testing
+* Infrastructure documentation
+* Domain Services documentation
+* Operations Runbooks
+* Disaster Recovery documentation
+* Command References
+* Architecture documentation
+
+URL:
+
+```text
+wiki.aether.lab
+```
 
 ---
 
@@ -321,24 +375,190 @@ Infrastructure monitoring and observability.
 
 Features:
 
-- LAN host monitoring
-- HTTP service monitoring
-- DNS health checks
-- SSH / TCP port monitoring
-- SSL/TLS validation handling
-- infrastructure visibility dashboard
+* LAN host monitoring
+* HTTP service monitoring
+* DNS health checks
+* TCP monitoring
+* Infrastructure visibility dashboard
 
 Monitored Systems:
 
-- Nora
-- WIN-DC01
-- WIN-CLIENT01
-- Cass
-- Reeba
-- AlmaLinux
-- Kali Linux
-- external connectivity
-- internal services
+* Nora
+* WIN-DC01
+* WIN-CLIENT01
+* Cass
+* Reeba
+* AlmaLinux
+* Kali Linux
+
+URL:
+
+```text
+kuma.aether.lab
+```
+
+---
+
+### Nginx Proxy Manager
+
+Purpose:
+
+Reverse proxy and service routing.
+
+Features:
+
+* DNS-based service access
+* Internal application publishing
+* Centralized service routing
+
+Configured Services:
+
+* wiki.aether.lab
+* kuma.aether.lab
+* memos.aether.lab
+
+---
+
+### Memos
+
+Purpose:
+
+Lightweight internal collaboration and note-sharing platform.
+
+Features:
+
+* Multi-user access
+* Persistent storage
+* LAN accessibility
+
+Milestone:
+
+First AETHER-hosted application actively used by another user.
+
+URL:
+
+```text
+memos.aether.lab
+```
+
+---
+
+### Aether Compose Lab
+
+Purpose:
+
+Docker networking, volume, and container experimentation environment.
+
+---
+
+# Documentation Platform
+
+Documentation is maintained through BookStack.
+
+Current Documentation Areas:
+
+* Infrastructure
+* Applications
+* Domain Services
+* Operations Runbooks
+* Disaster Recovery
+* Command References
+* Architecture
+
+BookStack serves as AETHER's institutional memory and primary operational knowledge base.
+
+---
+
+# Backup & Disaster Recovery
+
+AETHER includes a documented backup and recovery strategy.
+
+Protected Assets:
+
+* Host Configuration
+* Virtual Machines
+* Docker Applications
+* Docker Volumes
+* Active Directory Infrastructure
+* Documentation
+
+Backup Structure:
+
+```text
+AETHER/
+├── host
+├── docker
+├── docker-volumes
+├── exports
+├── full-backups
+└── configs
+```
+
+Recovery Assets:
+
+* WIN-DC01.xml
+* WIN-CLIENT01.xml
+* Virtual Machine Backups
+* Docker Volume Backups
+* Host Configuration Backups
+
+Disaster Recovery Documentation Includes:
+
+* Backup Strategy
+* Nora Host Recovery
+* Virtual Machine Recovery
+* Docker Service Recovery
+* Active Directory Recovery
+* Recovery Validation Checklist
+
+---
+
+# AI Infrastructure
+
+## ORICA — AI Sandbox
+
+Separate experimental environment for AI-assisted tooling and automation.
+
+### ORICA-AI1
+
+Host:
+
+Reeba
+
+Configured:
+
+* OpenClaw
+* OpenAI backend integration
+* File automation
+* Scripting experiments
+* Ruby experimentation
+
+---
+
+## Mira — Local AI Agent Node
+
+Purpose:
+
+Native AI and agent experimentation environment.
+
+Configured:
+
+* OpenClaw
+* Local dashboard
+* Gateway services
+* Workspace automation
+* File-based task execution
+* Documentation-aware assistance
+
+Current Areas of Exploration:
+
+* Infrastructure analysis
+* Knowledge management
+* Administrative workflows
+* Environment awareness
+* Operational recommendations
+
+BookStack serves as Mira's primary knowledge source.
 
 ---
 
@@ -346,175 +566,145 @@ Monitored Systems:
 
 ## Operating Systems
 
-- Ubuntu Server
-- Ubuntu Desktop
-- Windows Server
-- Windows 10
-- Windows 11
-- Kali Linux
-- AlmaLinux
+* Ubuntu Server
+* Ubuntu Desktop
+* Windows Server
+* Windows 10
+* Windows 11
+* Kali Linux
+* AlmaLinux
 
 ---
 
 ## Virtualization
 
-- KVM
-- libvirt
-- qcow2 snapshots
-- bridged networking
+* KVM
+* libvirt
+* qcow2
+* Bridged networking
 
 ---
 
 ## Containerization
 
-- Docker Engine
-- Docker Compose
-- persistent volumes
-- custom bridge networks
-- image/container lifecycle
-- self-hosted service deployment
+* Docker Engine
+* Docker Compose
+* Persistent volumes
+* Custom bridge networks
+* Self-hosted service deployment
 
 ---
 
 ## Identity & Access Management
 
-- Active Directory
-- Group Policy
-- Kerberos
-- role-based access control
-- delegated administration
+* Active Directory
+* Group Policy
+* Kerberos
+* Role-Based Access Control
+* Delegated Administration
 
 ---
 
 ## Linux Administration
 
-- SSH
-- systemd
-- journalctl
-- smartmontools
-- Cockpit
+* SSH
+* systemd
+* journalctl
+* smartmontools
+* Cockpit
 
 ---
 
-## Monitoring / Observability
+## Monitoring & Observability
 
-- Uptime Kuma
-- host monitoring
-- service health checks
-- DNS monitoring
-- HTTP monitoring
-- SSL/TLS troubleshooting
-- infrastructure visibility
+* Uptime Kuma
+* Host monitoring
+* Service health checks
+* DNS monitoring
+* HTTP monitoring
+* Infrastructure visibility
 
 ---
 
 ## Networking
 
-- TCP/IP
-- DNS
-- SMB shares
-- bridged virtualization networking
-- Docker networking
-- remote administration
+* TCP/IP
+* DNS
+* SMB Shares
+* Bridged virtualization networking
+* Docker networking
+* Reverse proxy services
+* Remote administration
 
 ---
 
-## Automation / Development
+## Documentation
 
-- Git
-- GitHub
-- Markdown
-- OpenClaw
-- Ruby
-- Bash
-- YAML
+* BookStack
+* Operations Runbooks
+* Disaster Recovery Procedures
+* Architecture Documentation
+* Command References
+
+---
+
+## Automation & Development
+
+* Git
+* GitHub
+* Markdown
+* OpenClaw
+* Ruby
+* Bash
+* YAML
 
 ---
 
 # Current Projects
 
-## Active Directory Infrastructure
+## Infrastructure Operations
 
 Completed:
 
-- domain controller deployment
-- domain client integration
-- organizational unit design
-- delegated administration
-- Group Policy enforcement
-- password and lockout policies
-- mapped network shares
+* Active Directory deployment
+* DNS implementation
+* Linux domain integration
+* Docker platform deployment
+* Monitoring deployment
+* Documentation platform deployment
+* Backup implementation
+* Disaster Recovery planning
 
 In Progress:
 
-- workstation administration
-- computer object delegation
-- PowerShell remoting
-- Remote Desktop policies
+* Automation
+* Service expansion
+* Infrastructure refinement
+* AI-assisted operations
 
 ---
 
-## Container Infrastructure
-
-Completed:
-
-- Docker installation on Nora
-- container lifecycle testing
-- persistent Docker volumes
-- custom Docker bridge networks
-- Docker Compose deployments
-- self-hosted nginx
-- Uptime Kuma deployment
-- LAN infrastructure monitoring
-
-In Progress:
-
-- reverse proxy research
-- internal DNS naming
-- containerized application hosting
-- future self-hosted services
-
----
-
-## Host Operations
-
-Completed:
-
-- Cockpit deployment
-- storage monitoring
-- SMART diagnostics
-- live infrastructure logging
-- VM memory optimization
-
-In Progress:
-
-- preventative SATA maintenance
-- hardware reliability validation
-
----
-
-## Security Lab *(planned)*
+## Commons Website *(Planned)*
 
 Future goals:
 
-- SMB enumeration
-- LDAP testing
-- Kerberos analysis
-- blue-team / red-team workflows
-- internal vulnerability testing
+* Self-hosted website
+* Technical portfolio
+* Photography
+* Music
+* Development projects
 
 ---
 
-## Personal Hosting *(planned)*
+## Security Lab *(Planned)*
 
 Future goals:
 
-- self-hosted website
-- portfolio hosting
-- photography
-- music
-- development projects
-- reverse proxy services
+* SMB enumeration
+* LDAP testing
+* Kerberos analysis
+* Blue-team workflows
+* Vulnerability assessment
 
 ---
 
@@ -522,20 +712,39 @@ Future goals:
 
 Detailed engineering logs, troubleshooting notes, architecture decisions, and infrastructure changes are documented in:
 
-`/logs`
+```text
+/logs
+```
 
 Topics include:
 
-- server deployment
-- virtualization
-- Docker
-- monitoring
-- networking
-- Active Directory
-- delegation
-- Group Policy
-- AI experimentation
-- infrastructure troubleshooting
+* Server deployment
+* Virtualization
+* Docker
+* Monitoring
+* Networking
+* Active Directory
+* DNS
+* Group Policy
+* Backup & Recovery
+* AI experimentation
+* Infrastructure troubleshooting
+
+---
+
+# Key Accomplishments
+
+* Built and administered a Windows Active Directory domain
+* Implemented DNS and Group Policy management
+* Joined Windows and Linux systems to Active Directory
+* Created delegated administrative roles and security groups
+* Deployed containerized services using Docker Compose
+* Implemented centralized monitoring with Uptime Kuma
+* Built a documentation platform using BookStack
+* Integrated AI-assisted operations through Mira/OpenClaw
+* Implemented backup and disaster recovery procedures
+* Created architecture diagrams and operational documentation
+* Maintained a detailed engineering log documenting infrastructure growth
 
 ---
 
@@ -543,12 +752,12 @@ Topics include:
 
 I learn best by building real systems.
 
-This homelab gives me hands-on experience operating, troubleshooting, monitoring, and documenting production-like infrastructure while preparing for roles in:
+This homelab gives me hands-on experience operating, troubleshooting, monitoring, documenting, backing up, and recovering production-like infrastructure while preparing for roles in:
 
-- IT Support
-- Systems Administration
-- Infrastructure Engineering
-- DevOps
+* IT Support
+* Systems Administration
+* Infrastructure Engineering
+* DevOps
 
 ---
 
