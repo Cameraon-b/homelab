@@ -1,0 +1,327 @@
+# Entry 21 — Agent Operations, Knowledge Systems, and Infrastructure Observation
+
+**Date:** June 6, 2026
+
+## Objective
+
+Expand AETHER's operational capabilities through AI-assisted administration, agent identity management, infrastructure observation, and automated knowledge creation.
+
+---
+
+# Environment
+
+## Physical Systems
+
+* Nora (Ubuntu Server)
+* Cass (Windows 10)
+* Reeba (Windows 11 / Kali Linux Dual Boot)
+
+## Virtual Machines
+
+* WIN-DC01
+* WIN-CLIENT01
+* AlmaLinux
+
+## Services
+
+* Active Directory
+* DNS
+* BookStack
+* Memos
+* Uptime Kuma
+* Nginx Proxy Manager
+* OpenClaw / Mira
+* Hermes
+* Jan
+
+---
+
+# Work Completed
+
+## Agent Identity and Access Management
+
+Created a dedicated read-only account for Mira on Nora.
+
+### Design Goals
+
+* Preserve accountability
+* Maintain auditability
+* Follow principle of least privilege
+* Avoid use of shared administrator credentials
+
+### Access Granted
+
+* SSH access
+* Read-only system observation
+* Infrastructure inventory collection
+
+### Access Restricted
+
+* sudo
+* Docker administration
+* libvirt administration
+* System modification
+
+This established the first dedicated AI identity within AETHER.
+
+---
+
+## Live Infrastructure Observation
+
+Mira performed an independent inventory of Nora through SSH.
+
+### Information Collected
+
+* Host information
+* Operating system details
+* Network configuration
+* Storage utilization
+* Service inventory
+* Open ports
+* Backup status
+
+### Infrastructure Visibility
+
+Mira successfully identified:
+
+* Docker services
+* Cockpit
+* SSH
+* Backup storage
+* DNS configuration
+* Running virtual machines through process inspection
+
+### Operational Assessment
+
+Mira correctly identified permission boundaries preventing direct access to:
+
+* Docker
+* libvirt
+
+and recommended maintaining those boundaries until additional read-only access requirements are defined.
+
+This represented the first successful AI-driven infrastructure assessment within AETHER.
+
+---
+
+## Memos Automation
+
+Expanded use of the Memos platform beyond manual note taking.
+
+### Agent Publishing
+
+Mira successfully:
+
+* Authenticated to Memos
+* Created public posts
+* Received user reactions
+* Participated in platform activity
+
+### Scheduled Posting
+
+Implemented automated daily posting through cron.
+
+Initial scheduling issues were traced to system time configuration and corrected.
+
+Result:
+
+* Automated daily Memos publication operational
+
+This established AETHER's first recurring agent-driven communication workflow.
+
+---
+
+## BookStack Integration
+
+Expanded agent interaction with AETHER's knowledge platform.
+
+### API Integration
+
+Successfully configured BookStack API access for Mira.
+
+Troubleshooting included:
+
+* Token validation
+* Credential verification
+* API endpoint testing
+
+Root cause of authentication issues was traced to an incorrect token identifier.
+
+### Validation
+
+Confirmed ability to:
+
+* Read shelves
+* Read books
+* Read pages
+* Create content
+* Maintain journal entries
+
+---
+
+## Mira's Shelf
+
+Created a dedicated BookStack shelf for agent-authored content.
+
+### Initial Structure
+
+* Mira's Journal
+* Future operational observations
+* Investigation notes
+* Recommendations
+
+### First Journal Entry
+
+Mira authored the first journal entry documenting:
+
+* Memos deployment experience
+* BookStack onboarding
+* Initial participation within AETHER
+
+This established a persistent historical record from an agent perspective.
+
+---
+
+## Local Agent Architecture
+
+Continued experimentation with local AI models.
+
+### Hermes Deployment
+
+Successfully configured Hermes on Cass.
+
+### Jan Integration
+
+Connected Hermes to a locally hosted Jan model.
+
+Validation completed through:
+
+* Desktop interface
+* VS Code terminal workflow
+
+### Observations
+
+The VS Code terminal workflow provided a more direct development experience by operating within the active project environment.
+
+### Troubleshooting
+
+A terminal integration issue following restart was successfully diagnosed and corrected through Hermes-assisted troubleshooting.
+
+This represented the first instance of an AETHER agent assisting in restoration of its own operating environment.
+
+---
+
+# Lessons Learned
+
+## AI Agents Benefit From Individual Identities
+
+Providing agents with dedicated accounts preserves:
+
+* Accountability
+* Audit trails
+* Permission boundaries
+* Operational clarity
+
+Agent actions can now be clearly distinguished from administrator actions.
+
+---
+
+## Observation Before Authority
+
+Read-only access provided substantial value without administrative privileges.
+
+Most useful operational tasks involved:
+
+* Observation
+* Analysis
+* Reporting
+* Documentation
+
+rather than direct modification of systems.
+
+---
+
+## Knowledge Systems Amplify Agent Utility
+
+Mira became significantly more useful once granted access to:
+
+* Infrastructure documentation
+* Live system information
+* Memos
+* BookStack
+
+The combination of documentation and observation proved more valuable than either capability alone.
+
+---
+
+## Agent Specialization Emerged Naturally
+
+Distinct operational roles began to develop:
+
+### Mira
+
+* Infrastructure observation
+* Documentation
+* Reporting
+* Knowledge management
+
+### Hermes
+
+* Development
+* Automation
+* Local experimentation
+* Technical troubleshooting
+
+This specialization reduced complexity while improving effectiveness.
+
+---
+
+# Current State
+
+## Infrastructure
+
+* Nora operational
+* WIN-DC01 operational
+* WIN-CLIENT01 operational
+* Alma operational
+* Reeba operational
+* Cass operational
+
+## Services
+
+* BookStack operational
+* Memos operational
+* Uptime Kuma operational
+* Nginx Proxy Manager operational
+* Mira operational
+* Hermes operational
+
+## Agent Systems
+
+* Dedicated Mira identity established
+* SSH observation operational
+* Memos publishing operational
+* BookStack integration operational
+* Daily journal creation operational
+
+---
+
+# AETHER Status
+
+**All Systems Operational**
+
+---
+
+# Notes
+
+This session marked a transition from infrastructure construction toward agent-assisted operations.
+
+Key accomplishments included:
+
+* Establishing the first dedicated AI identity
+* Performing the first AI-driven infrastructure assessment
+* Enabling automated agent communication
+* Creating persistent agent-authored knowledge repositories
+* Deploying a local development-focused agent architecture
+
+AETHER continues evolving from a documented infrastructure environment into an ecosystem containing infrastructure, knowledge systems, automation, and specialized AI participants.
