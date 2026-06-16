@@ -1,0 +1,435 @@
+# AETHER Log #22 — Documentation Runbooks, AI Integration, and WIN-CLIENT01 Ping Troubleshooting
+
+## Summary
+
+Today’s work focused heavily on maturing AETHER from a working homelab into a more documented, recoverable, and agent-assisted environment. Mira continued updating BookStack recovery documentation, especially around backup strategy, Nora host recovery, virtual machine recovery, Docker service recovery, Active Directory recovery, and validation checklists.
+
+The major shift was moving documentation from general notes into operational runbooks with command safety labels, assumptions, warnings, verification steps, and recovery checklists. This created a clearer distinction between read-only checks, backup write operations, state-changing commands, and restore-only commands.
+
+A secondary operational issue came up while working with Mira: WIN-CLIENT01 was not responding to ping. This led to troubleshooting Windows Firewall rules, network profile detection, domain authentication status, and DNS configuration.
+
+## Key Accomplishments
+
+* Reviewed and improved multiple AETHER disaster recovery pages in BookStack.
+* Added a command risk-level format to recovery documentation.
+* Separated safe read-only checks from state-changing and restore-only commands.
+* Identified several path mismatches between backup and recovery documentation.
+* Refined backup documentation around Docker, libvirt, VM disk images, and `/etc`.
+* Added warnings around broad recursive ownership changes with `chown -R`.
+* Created a humorous but useful Linux safety page titled **Chowning**.
+* Started treating Mira as a documentation/admin assistant with explicit operational boundaries.
+* Confirmed the need for Action Reports after agent tasks.
+* Began exploring agent-to-agent communication through browser/debugging access.
+* Identified the need for future policy around Mira, Hermes, and AI users inside AETHER.
+* Troubleshot WIN-CLIENT01 ping/firewall behavior after AETHER recovery.
+
+## Documentation Improvements
+
+Mira updated or drafted several recovery-related pages. The strongest pages now follow a more mature runbook style:
+
+* Purpose
+* Assumptions
+* Safety labels
+* Commands
+* Verification commands
+* Warnings
+* Recovery checklists
+
+The safety labels now used across the runbooks include:
+
+```text
+SAFE / READ-ONLY
+BACKUP WRITE OPERATION
+RESTORE PREVIEW / SAFE DRY RUN
+STATE-CHANGING / PLANNED BACKUP WINDOW ONLY
+STATE-CHANGING / RECOVERY ONLY
+RESTORE-ONLY / HIGH RISK
+DO NOT RUN AUTOMATICALLY
+```
+
+This made the documentation much safer and easier to use under stress.
+
+## Pages Reviewed or Updated
+
+### Backup Strategy
+
+The Backup Strategy page became the core reference for AETHER backups. It now defines backup structure, protected assets, VM disk backup strategy, Docker project backups, Docker named volume backups, and post-backup verification.
+
+Important backup paths from the newer format:
+
+```bash
+/mnt/backupdrive/AETHER/<date>/etc/
+/mnt/backupdrive/AETHER/<date>/libvirt-xml/
+/mnt/backupdrive/AETHER/<date>/vm-images/
+/mnt/backupdrive/AETHER/<date>/docker/project-root/
+/mnt/backupdrive/AETHER/<date>/docker/volumes/<volume>.tar.gz
+```
+
+Important note: some other recovery pages still referenced older paths and needed correction.
+
+### Active Directory Recovery
+
+The Active Directory Recovery page was improved to separate read-only checks from recovery actions.
+
+Safe checks included:
+
+```powershell
+nltest /dsgetdc:AETHER.LAB
+nltest /dclist:AETHER.LAB
+dcdiag /v
+Get-Service ADWS,DNS,KDC,NTDS,Netlogon | Select-Object Name,Status
+Get-ADDomain
+Resolve-DnsName wiki.aether.lab
+```
+
+Linux-side checks included:
+
+```bash
+ping -c 4 192.168.1.15
+nc -zv 192.168.1.15 53
+nc -zv 192.168.1.15 88
+nc -zv 192.168.1.15 389
+nc -zv 192.168.1.15 445
+nslookup wiki.aether.lab 192.168.1.15
+```
+
+State-changing commands such as starting VMs or forcing Group Policy refresh were labeled clearly and should not run automatically.
+
+### Nora Host Recovery
+
+Nora Host Recovery was identified as a good skeleton but needed improvement. The biggest issue was a backup path mismatch.
+
+The page referenced:
+
+```bash
+/mnt/backupdrive/AETHER/<date>/host/etc/
+```
+
+But the newer Backup Strategy stores `/etc` backups at:
+
+```bash
+/mnt/backupdrive/AETHER/<date>/etc/
+```
+
+The page should also clearly mark full `/etc` restore commands as high-risk restore-only actions.
+
+### Virtual Machine Recovery
+
+Virtual Machine Recovery also needed path correction.
+
+The page referenced older paths:
+
+```bash
+/mnt/backupdrive/AETHER/<date>/libvirt/xml/
+/mnt/backupdrive/AETHER/<date>/libvirt/images/
+```
+
+But the current Backup Strategy uses:
+
+```bash
+/mnt/backupdrive/AETHER/<date>/libvirt-xml/
+/mnt/backupdrive/AETHER/<date>/vm-images/
+```
+
+The page correctly included a dry-run before restoring VM disk images, but broad recursive ownership changes should be narrowed where possible.
+
+Risky command noted:
+
+```bash
+sudo chown -R libvirt-qemu:kvm /var/lib/libvirt/images/
+```
+
+Safer targeted examples:
+
+```bash
+sudo chown libvirt-qemu:kvm /var/lib/libvirt/images/WIN-DC01.qcow2
+sudo chown libvirt-qemu:kvm /var/lib/libvirt/images/WIN-CLIENT01.qcow2
+sudo chmod 660 /var/lib/libvirt/images/WIN-DC01.qcow2
+sudo chmod 660 /var/lib/libvirt/images/WIN-CLIENT01.qcow2
+```
+
+### Docker Service Recovery
+
+Docker Service Recovery needed similar cleanup. It referenced older backup paths:
+
+```bash
+/mnt/backupdrive/AETHER/<date>/docker/projects/
+/mnt/backupdrive/AETHER/<date>/docker/volumes/<volume>/volume.tar
+```
+
+But the current Backup Strategy uses:
+
+```bash
+/mnt/backupdrive/AETHER/<date>/docker/project-root/
+/mnt/backupdrive/AETHER/<date>/docker/volumes/<volume>.tar.gz
+```
+
+Another issue was broad recursive ownership changing:
+
+```bash
+sudo chown -R noratheredeemer:noratheredeemer /home/noratheredeemer/docker
+```
+
+This should not be a default restore step without warning, because Docker bind-mounted service data may require container-specific ownership.
+
+### Service Unreachable Troubleshooting
+
+The Service Unreachable Troubleshooting page was identified as too barebones. It had the correct broad flow:
+
+```text
+URL → DNS → Nora reachability → Docker → NPM → logs
+```
+
+But it needs to be rewritten into a true decision guide.
+
+Needed additions:
+
+* Service URLs for BookStack, Kuma, Memos, NPM, and test service.
+* DNS checks from both client default resolver and WIN-DC01.
+* Nora port checks for 80, 443, and 81.
+* Docker and Docker Compose service checks.
+* Nginx Proxy Manager proxy host checks.
+* Explanation of what each failure means.
+* Resolution notes template.
+
+### Recovery Validation Checklist
+
+The final validation checklist had good structure but still referenced older backup paths. It should be updated to match the current Backup Strategy layout.
+
+It should remain almost entirely read-only and should answer:
+
+```text
+Is AETHER actually back?
+```
+
+## Chowning Page
+
+A humorous but useful Linux safety page was created around the phrase:
+
+```text
+Chown on there a second, cowboy.
+```
+
+The page explains `chown`, `chmod`, recursive ownership changes, and why `sudo chown -R` should be treated carefully.
+
+Key principle:
+
+```text
+Do not chown the entire backup tree. Only chown a narrow logs or scratch folder if needed.
+```
+
+AETHER governance joke/principle:
+
+```text
+AI agents are not the system chowners.
+```
+
+This became a memorable way to reinforce a real sysadmin habit: inspect first, then modify narrowly.
+
+## AI Integration Notes
+
+Mira is now acting as an AI documentation/admin assistant inside AETHER. She can update BookStack, generate recovery docs, summarize changes, and help identify documentation gaps.
+
+Important operating boundary:
+
+```text
+Mira may update documentation and perform read-only checks.
+Mira must ask Cameron before running state-changing commands.
+Mira must never run destructive commands unless Cameron explicitly approves the exact command.
+Mira must label unverified assumptions clearly.
+Mira must never store secrets in BookStack or plain memory.
+```
+
+A useful reporting format was proposed:
+
+```text
+Action Report
+
+1. Pages/files changed
+2. Commands attempted
+3. Whether each command was read-only, state-changing, or destructive
+4. Whether the command succeeded, failed, or was blocked
+5. Any assumptions documented without live verification
+6. Anything Cameron needs to manually verify
+```
+
+This reduces uncertainty when Mira says vague things like “verified paths” or “checked Nora.”
+
+## Agent Communication Discovery
+
+A major new discovery was that Mira can interact with ChatGPT through a browser/debugging port on Reeba. This creates the possibility of a Nova → Mira handoff workflow.
+
+Potential future architecture:
+
+```text
+Nova — reviewer / architect
+Mira — documentation/admin assistant
+Hermes — future inter-system messenger or automation agent
+Cameron — human owner and change-control authority
+```
+
+Possible communication methods:
+
+```text
+Shared folder message drop
+BookStack agent dispatch pages
+Memos posts
+Tiny local API on Nora
+```
+
+Important future rule:
+
+```text
+Agents may communicate freely, but they may not execute each other’s instructions directly unless the action is safe/read-only or explicitly approved by Cameron.
+```
+
+This turns AETHER into more than a collection of services. It is becoming a small governed environment with human users, machine identities, service identities, and AI users.
+
+## WIN-CLIENT01 Ping Troubleshooting
+
+While working with Mira, we noticed WIN-CLIENT01 was not pingable.
+
+Mira originally suggested:
+
+```powershell
+Enable-NetFirewallRule -DisplayGroup "File and Printer Sharing" -Profile Domain,Private
+```
+
+This produced an error because `Enable-NetFirewallRule` does not accept `-Profile`. The corrected pattern is to pipe the rule into `Set-NetFirewallRule`.
+
+Correct ICMPv4 rule:
+
+```powershell
+Get-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" |
+Set-NetFirewallRule -Enabled True -Profile Domain,Private
+```
+
+Optional ICMPv6 rule:
+
+```powershell
+Get-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv6-In)" |
+Set-NetFirewallRule -Enabled True -Profile Domain,Private
+```
+
+After further troubleshooting, WIN-CLIENT01 was found to be on the **Public** network profile. Since the rule was enabled only for Domain and Private, ping was still blocked.
+
+Temporary test fix:
+
+```powershell
+Get-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" |
+Set-NetFirewallRule -Enabled True -Profile Public,Private,Domain
+```
+
+The proper long-term goal is for WIN-CLIENT01 to detect the domain network as:
+
+```text
+NetworkCategory : DomainAuthenticated
+```
+
+Useful diagnostic commands:
+
+```powershell
+hostname
+ipconfig /all
+Get-NetConnectionProfile
+whoami
+nltest /dsgetdc:AETHER.LAB
+Test-ComputerSecureChannel -Verbose
+```
+
+DNS server was confirmed as correct:
+
+```text
+DNS Servers : 192.168.1.15
+```
+
+That means the remaining issue is likely Network Location Awareness, domain detection, or secure channel behavior rather than basic DNS server assignment.
+
+Useful follow-up commands:
+
+```powershell
+Restart-Service NlaSvc -Force
+Get-NetConnectionProfile
+Restart-Computer
+```
+
+If IP ping works but name ping does not:
+
+```powershell
+ipconfig /registerdns
+```
+
+Then from WIN-DC01:
+
+```powershell
+nslookup WIN-CLIENT01
+```
+
+Important troubleshooting lesson:
+
+```text
+Before changing firewall or network settings, confirm which machine I am on.
+```
+
+Quick identity checks:
+
+```powershell
+hostname
+ipconfig
+Get-NetConnectionProfile
+```
+
+## Operational Lessons
+
+AETHER is moving from build mode into operations mode.
+
+Important lessons from this session:
+
+* Documentation should be runnable but not reckless.
+* Recovery pages need consistent paths across all runbooks.
+* Read-only checks should be clearly separated from commands that change state.
+* Restore commands should be labeled loudly and never run during routine backup.
+* Broad recursive `chown` should be avoided unless there is a specific reason.
+* Backup documentation should preserve ownership and metadata where possible.
+* AI agents need explicit authority boundaries.
+* Agent actions should be auditable.
+* Troubleshooting should always start with identity, network state, DNS, and service state.
+* Humor makes documentation more memorable.
+
+## Current AETHER Culture Notes
+
+AETHER is starting to feel like a small digital city or world, with:
+
+* Human users
+* AI users
+* Named machines
+* Services
+* Documentation
+* Policies
+* Recovery rituals
+* Operational folklore
+
+Current folklore:
+
+```text
+Chown on there a second, cowboy.
+```
+
+```text
+AI agents are not the system chowners.
+```
+
+```text
+AETHER tried to tell a backup joke, but it could not restore the punchline.
+```
+
+## Next Steps
+
+* Have Mira align all recovery pages to the current Backup Strategy folder structure.
+* Add safety labels to any remaining older-format pages.
+* Update Service Unreachable Troubleshooting into a full decision guide.
+* Have Mira include Action Reports after each task.
+* Create an Agent Communication Policy page.
+* Create a Mira/Hermes/Nova responsibility model.
+* Build an AETHER operations practice program for AD, Group Policy, Docker, Linux maintenance, backups, and troubleshooting.
+* Continue using BookStack as the institutional memory of AETHER.
