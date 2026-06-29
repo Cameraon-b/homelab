@@ -25,7 +25,7 @@ The goal is simple:
 
 # Current Infrastructure
 
-<img width="1290" height="839" alt="Aether Network Architecture Diagram 3 0" src="https://github.com/user-attachments/assets/c0d7ee13-c363-47a1-a92e-e25d6477d046" />
+<img width="1290" height="839" alt="Aether Network Architecture Diagram 5.0" src="https://github.com/Cameraon-b/homelab/blob/main/diagrams/Aether%20Network%20Architecture%20Diagram%205.0.png" />
 
 ## Physical Systems
 
