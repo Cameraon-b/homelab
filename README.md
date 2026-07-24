@@ -2,7 +2,7 @@
 
 *A local-first infrastructure, development, and AI operations platform.*
 
-<img width="1290" height="839" alt="Aether Network Architecture Diagram 5.0" src="https://github.com/Cameraon-b/homelab/blob/main/diagrams/Aether%20Network%20Architecture%20Diagram%205.0.png" />
+<img width="1290" height="839" alt="Aether Network Architecture Diagram 6.0" src="https://github.com/Cameraon-b/homelab/blob/main/diagrams/Aether%20Network%20Architecture%20Diagram%206.0.png" />
 ---
 
 ## Overview
